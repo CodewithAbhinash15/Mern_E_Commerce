@@ -1,13 +1,11 @@
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 
-
 // ==========================================
 // LOAD ENVIRONMENT VARIABLES
 // ==========================================
 
 dotenv.config();
-
 
 // ==========================================
 // CHECK ENV VARIABLES
@@ -23,14 +21,17 @@ console.log(
     !!process.env.EMAIL_PASS
 );
 
-
 // ==========================================
 // CREATE EMAIL TRANSPORTER
 // ==========================================
 
 const transporter = nodemailer.createTransport({
 
-    service: "gmail",
+    host: "smtp.gmail.com",
+
+    port: 587,
+
+    secure: false,
 
     auth: {
 
@@ -41,7 +42,6 @@ const transporter = nodemailer.createTransport({
     },
 
 });
-
 
 // ==========================================
 // VERIFY EMAIL CONFIGURATION
@@ -66,7 +66,6 @@ transporter.verify((error, success) => {
 
 });
 
-
 // ==========================================
 // SEND OTP EMAIL
 // ==========================================
@@ -87,7 +86,6 @@ export const sendOTPEmail = async (
 
             subject: "Verify Your Email - MyStore",
 
-
             html: `
 
                 <div style="
@@ -100,7 +98,6 @@ export const sendOTPEmail = async (
                     background: #ffffff;
                 ">
 
-
                     <h2 style="
                         color: #2563eb;
                         text-align: center;
@@ -108,14 +105,12 @@ export const sendOTPEmail = async (
                         Email Verification
                     </h2>
 
-
                     <p style="
                         font-size: 16px;
                         color: #374151;
                     ">
                         Hello <strong>${name}</strong>,
                     </p>
-
 
                     <p style="
                         font-size: 15px;
@@ -126,7 +121,6 @@ export const sendOTPEmail = async (
                         with MyStore.
                     </p>
 
-
                     <p style="
                         font-size: 15px;
                         color: #374151;
@@ -134,7 +128,6 @@ export const sendOTPEmail = async (
                         Please use the following OTP
                         to verify your email address:
                     </p>
-
 
                     <div style="
                         font-size: 32px;
@@ -152,7 +145,6 @@ export const sendOTPEmail = async (
 
                     </div>
 
-
                     <p style="
                         font-size: 14px;
                         color: #6b7280;
@@ -161,7 +153,6 @@ export const sendOTPEmail = async (
                         <strong>10 minutes</strong>.
                     </p>
 
-
                     <p style="
                         font-size: 14px;
                         color: #dc2626;
@@ -169,13 +160,11 @@ export const sendOTPEmail = async (
                         ⚠️ Do not share this OTP with anyone.
                     </p>
 
-
                     <hr style="
                         border: none;
                         border-top: 1px solid #e5e7eb;
                         margin: 25px 0;
                     ">
-
 
                     <p style="
                         font-size: 12px;
@@ -185,28 +174,23 @@ export const sendOTPEmail = async (
                         © MyStore. All rights reserved.
                     </p>
 
-
                 </div>
 
             `,
 
         });
 
-
         console.log(
             "OTP EMAIL SENT SUCCESSFULLY TO:",
             email
         );
-
 
         console.log(
             "MESSAGE ID:",
             info.messageId
         );
 
-
         return info;
-
 
     } catch (error) {
 
@@ -214,7 +198,6 @@ export const sendOTPEmail = async (
             "EMAIL SENDING ERROR:",
             error.message
         );
-
 
         throw error;
 
