@@ -20,7 +20,7 @@ import AdminDashboard from "../admin/AdminDashboard";
 import AdminLogin from "../admin/AdminLogin";
 import AdminOrders from "../admin/AdminOrders";
 
-import VerifyOTP from "../components/VerifyOTP";
+import VerifyOTP from "../components/verifyOTP";
 import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
 
