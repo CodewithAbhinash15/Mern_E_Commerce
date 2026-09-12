@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:3200/api",
+    baseURL: "https://mern-e-commerce-2qen.onrender.com/api",
 });
 
 
