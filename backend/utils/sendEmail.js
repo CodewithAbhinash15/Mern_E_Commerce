@@ -1,207 +1,85 @@
-import dotenv from "dotenv";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-// ==========================================
-// LOAD ENVIRONMENT VARIABLES
-// ==========================================
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-dotenv.config();
+const sendEmail = async (email, otp) => {
+  try {
+    console.log("Sending OTP to:", email);
 
-// ==========================================
-// CHECK ENV VARIABLES
-// ==========================================
+    const { data, error } = await resend.emails.send({
+      from: "MERN E-Commerce <onboarding@resend.dev>",
+      to: [email],
+      subject: "Your OTP - MERN E-Commerce",
 
-console.log(
-    "EMAIL USER EXISTS:",
-    !!process.env.EMAIL_USER
-);
+      html: `
+        <div style="
+          font-family: Arial, sans-serif;
+          max-width: 600px;
+          margin: auto;
+          padding: 30px;
+          border: 1px solid #ddd;
+          border-radius: 10px;
+        ">
 
-console.log(
-    "EMAIL PASS EXISTS:",
-    !!process.env.EMAIL_PASS
-);
+          <h2 style="text-align:center;">
+            MERN E-Commerce
+          </h2>
 
-// ==========================================
-// CREATE EMAIL TRANSPORTER
-// ==========================================
+          <h3>Email Verification</h3>
 
-const transporter = nodemailer.createTransport({
+          <p>Your OTP for email verification is:</p>
 
-    host: "smtp.gmail.com",
+          <div style="
+            text-align:center;
+            margin:30px 0;
+          ">
+            <span style="
+              font-size:32px;
+              font-weight:bold;
+              letter-spacing:8px;
+              background:#f2f2f2;
+              padding:15px 25px;
+              border-radius:8px;
+            ">
+              ${otp}
+            </span>
+          </div>
 
-    port: 587,
+          <p>
+            This OTP is valid for <strong>10 minutes</strong>.
+          </p>
 
-    secure: false,
+          <p>
+            Please do not share this OTP with anyone.
+          </p>
 
-    auth: {
+          <p>
+            If you did not request this OTP, simply ignore this email.
+          </p>
 
-        user: process.env.EMAIL_USER,
+          <hr />
 
-        pass: process.env.EMAIL_PASS,
+          <p style="text-align:center;color:#777;">
+            MERN E-Commerce
+          </p>
 
-    },
-
-});
-
-// ==========================================
-// VERIFY EMAIL CONFIGURATION
-// ==========================================
-
-transporter.verify((error, success) => {
+        </div>
+      `,
+    });
 
     if (error) {
-
-        console.error(
-            "EMAIL CONFIGURATION ERROR:",
-            error.message
-        );
-
-    } else {
-
-        console.log(
-            "EMAIL SERVER READY"
-        );
-
+      console.error("RESEND EMAIL ERROR:", error);
+      throw new Error("Failed to send OTP email");
     }
 
-});
+    console.log("OTP EMAIL SENT SUCCESSFULLY:", data?.id);
 
-// ==========================================
-// SEND OTP EMAIL
-// ==========================================
+    return data;
 
-export const sendOTPEmail = async (
-    email,
-    name,
-    otp
-) => {
-
-    try {
-
-        const info = await transporter.sendMail({
-
-            from: `"MyStore" <${process.env.EMAIL_USER}>`,
-
-            to: email,
-
-            subject: "Verify Your Email - MyStore",
-
-            html: `
-
-                <div style="
-                    font-family: Arial, sans-serif;
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 30px;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 12px;
-                    background: #ffffff;
-                ">
-
-                    <h2 style="
-                        color: #2563eb;
-                        text-align: center;
-                    ">
-                        Email Verification
-                    </h2>
-
-                    <p style="
-                        font-size: 16px;
-                        color: #374151;
-                    ">
-                        Hello <strong>${name}</strong>,
-                    </p>
-
-                    <p style="
-                        font-size: 15px;
-                        color: #6b7280;
-                        line-height: 1.6;
-                    ">
-                        Thank you for creating an account
-                        with MyStore.
-                    </p>
-
-                    <p style="
-                        font-size: 15px;
-                        color: #374151;
-                    ">
-                        Please use the following OTP
-                        to verify your email address:
-                    </p>
-
-                    <div style="
-                        font-size: 32px;
-                        font-weight: bold;
-                        letter-spacing: 8px;
-                        text-align: center;
-                        padding: 18px;
-                        margin: 25px 0;
-                        background: #eff6ff;
-                        color: #2563eb;
-                        border-radius: 10px;
-                    ">
-
-                        ${otp}
-
-                    </div>
-
-                    <p style="
-                        font-size: 14px;
-                        color: #6b7280;
-                    ">
-                        This OTP will expire in
-                        <strong>10 minutes</strong>.
-                    </p>
-
-                    <p style="
-                        font-size: 14px;
-                        color: #dc2626;
-                    ">
-                        ⚠️ Do not share this OTP with anyone.
-                    </p>
-
-                    <hr style="
-                        border: none;
-                        border-top: 1px solid #e5e7eb;
-                        margin: 25px 0;
-                    ">
-
-                    <p style="
-                        font-size: 12px;
-                        text-align: center;
-                        color: #9ca3af;
-                    ">
-                        © MyStore. All rights reserved.
-                    </p>
-
-                </div>
-
-            `,
-
-        });
-
-        console.log(
-            "OTP EMAIL SENT SUCCESSFULLY TO:",
-            email
-        );
-
-        console.log(
-            "MESSAGE ID:",
-            info.messageId
-        );
-
-        return info;
-
-    } catch (error) {
-
-        console.error(
-            "EMAIL SENDING ERROR:",
-            error.message
-        );
-
-        throw error;
-
-    }
-
+  } catch (error) {
+    console.error("EMAIL SENDING ERROR:", error);
+    throw error;
+  }
 };
 
+export default sendEmail;
