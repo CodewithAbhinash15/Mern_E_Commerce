@@ -39,17 +39,12 @@ export default function Signup() {
     // =========================
 
     const handleSubmit = async (e) => {
-        // Prevent page refresh
         e.preventDefault();
 
         setMsg("");
         setLoading(true);
 
         try {
-            // =========================
-            // SEND SIGNUP REQUEST
-            // =========================
-
             const response = await api.post(
                 "/auth/signup",
                 form
@@ -62,23 +57,16 @@ export default function Signup() {
 
             setMsg(
                 response.data.message ||
-                "OTP sent successfully!"
+                "Signup successful!"
             );
 
             // =========================
-            // REDIRECT TO OTP PAGE
+            // GO TO LOGIN
             // =========================
 
             setTimeout(() => {
-                navigate(
-                    "/verify-otp",
-                    {
-                        state: {
-                            email: form.email,
-                        },
-                    }
-                );
-            }, 800);
+                navigate("/login");
+            }, 1000);
 
         } catch (error) {
             console.error(
@@ -156,6 +144,7 @@ export default function Signup() {
                             width: "100%",
                         }}
                     >
+
                         <input
                             type={
                                 showPassword
@@ -194,6 +183,7 @@ export default function Signup() {
                                 ? "🙈"
                                 : "👁️"}
                         </span>
+
                     </div>
 
                     {/* SUBMIT BUTTON */}
@@ -215,4 +205,3 @@ export default function Signup() {
         </div>
     );
 }
-
