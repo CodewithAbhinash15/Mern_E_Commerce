@@ -34,11 +34,10 @@ export default function Signup() {
         });
     };
 
-    // =========================
+    
     // HANDLE SIGNUP
-    // =========================
-
-    const handleSubmit = async (e) => {
+    
+        const handleSubmit = async (e) => {
         e.preventDefault();
 
         setMsg("");
